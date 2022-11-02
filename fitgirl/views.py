@@ -6,4 +6,4 @@ from .exception import abort
 
 # Create your views here.
 def d(r):
-    return abort(404)
+    return abort(499)

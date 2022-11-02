@@ -1,5 +1,5 @@
 import requests as r
-
+import time
 import re
 import json
 from bs4 import BeautifulSoup as bs
@@ -80,7 +80,7 @@ def get_screenshots(body):
     return screenshots
 
 
-def game_data(body):
+def game_data_(body):
     #body = get_body(gameID)
     data = get_data(body)
     if data is None:
@@ -98,9 +98,99 @@ def get_game_with_name(game:str):
     game = game.replace(' ', '-')
     re_ = r.get(fitgirl+game).text
     soup = bs(re_, 'html.parser')
-    return game_data(soup)
+    return game_data_(soup)
 
 def get_game_with_url(game:str):
     re_ = r.get(game).text
     soup = bs(re_, 'html.parser')
-    return game_data(soup)
+    return game_data_(soup)
+
+def check_limit():
+    p = r.get(f'https://fitgirl-repacks.site/all-my-repacks-a-z/?lcp_page0=1#lcp_instance_0').text
+    d = bs(p, 'html.parser')
+    f = d.find('article').find('div').find('ul', {'class': 'lcp_paginator'}).findAll('li')[-2]
+    r_ = bs(str(f), 'html.parser')
+    # print(a)
+    m = []
+    for a in r_.findAll('a', title=True):
+        m.append(a['title'])
+    return int(m[0])
+
+def scrape_from_site(f_num:int, t_num:int):
+    start = time.time()
+    print(f"starting process at {str(start)}")
+    if f_num <= t_num:
+        l = []
+        while f_num <= t_num:
+            p = r.get(f'https://fitgirl-repacks.site/all-my-repacks-a-z/?lcp_page0={f_num}#lcp_instance_0').text
+            d = bs(p, 'html.parser')           
+            f = d.find('article').find('div').find('ul').find_all('li')
+            # print(type(l))
+            for i in f:
+                l.append(i)
+            f_num += 1
+        m = []
+        
+        for i in l:
+            y = bs(str(i), 'html.parser').find('li')
+            for a in y.findAll('a', href=True):
+                m.append(a['href'])
+        end = time.time()
+        print(f"Took {end-start} seconds to complete")
+        print(f"completed scraping from fitgirl...\n{len(m)} links scraped\nstarting data extraction...")
+        chunk_data = []
+        start_ = time.time()
+        count = 1
+        for i in m:
+            start = time.time()
+            chunk_data.append(get_game_with_url(i))
+            end = time.time()
+            print(f"processes item {count} at {end-start} seconds")
+            count += 1
+
+        end_ = time.time()
+        print(f"Took {end_-start_} to process total chunk")
+        return chunk_data
+    else:
+        return False        
+
+def scrape_all_from_site():
+    f_num = 1
+    t_num = check_limit()
+    start = time.time()
+    print(f"starting process at {str(start)}")
+    if f_num <= t_num:
+        l = []
+        while f_num <= t_num:
+            p = r.get(f'https://fitgirl-repacks.site/all-my-repacks-a-z/?lcp_page0={f_num}#lcp_instance_0').text
+            d = bs(p, 'html.parser')           
+            f = d.find('article').find('div').find('ul').find_all('li')
+            # print(type(l))
+            for i in f:
+                l.append(i)
+            f_num += 1
+        m = []
+        
+        for i in l:
+            y = bs(str(i), 'html.parser').find('li')
+            for a in y.findAll('a', href=True):
+                m.append(a['href'])
+        end = time.time()
+        print(f"Took {end-start} seconds to complete")
+        print(f"completed scraping from fitgirl...\n{len(m)} links scraped\nstarting data extraction...")
+        chunk_data = []
+        start_ = time.time()
+        count = 1
+        for i in m:
+            start = time.time()
+            chunk_data.append(get_game_with_url(i))
+            end = time.time()
+            print(f"processes item {count} at {end-start} seconds")
+            count += 1
+
+        end_ = time.time()
+        print(f"Took {end_-start_} to process total chunk")
+        return chunk_data
+    else:
+        return False        
+
