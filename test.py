@@ -1,8 +1,6 @@
 import requests as r
 from bs4 import BeautifulSoup as bs
 
-NUM_PER_PAGE = 50
-
 # def do(f_num:int, t_num:int):
 #     if f_num <= t_num:
 #         l = []
@@ -29,13 +27,19 @@ NUM_PER_PAGE = 50
 # do(1,3)
 
 
-def check_limit():
-    p = r.get(f'https://fitgirl-repacks.site/all-my-repacks-a-z/?lcp_page0=1#lcp_instance_0').text
-    d = bs(p, 'html.parser')
-    f = d.find('article').find('div').find('ul', {'class': 'lcp_paginator'}).findAll('li')[-2]
-    r_ = bs(str(f), 'html.parser')
-    # print(a)
-    m = []
-    for a in r_.findAll('a', title=True):
-        m.append(a['title'])
-    return int(m[0])
+# def check_limit():
+#     p = r.get(f'https://fitgirl-repacks.site/all-my-repacks-a-z/?lcp_page0=1#lcp_instance_0').text
+#     d = bs(p, 'html.parser')
+#     f = d.find('article').find('div').find('ul', {'class': 'lcp_paginator'}).findAll('li')[-2]
+#     r_ = bs(str(f), 'html.parser')
+#     # print(a)
+#     m = []
+#     for a in r_.findAll('a', title=True):
+#         m.append(a['title'])
+#     return int(m[0])
+
+a = r.get('https://steamunlocked.net/?s=+').text
+b = bs(a, 'html.parser').find('nav', {'class':"navigation pagination"}).find('div', {'class':'nav-links'}).findAll('a', {"class":"page-numbers"})
+c = bs(str(b[-1]), 'html.parser').text
+with open("a.txt", "w") as f:
+    f.write(str(c))

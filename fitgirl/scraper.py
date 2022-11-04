@@ -3,6 +3,7 @@ import time
 import re
 import json
 from bs4 import BeautifulSoup as bs
+# from models import fitgirl_db
 
 fitgirl = "https://fitgirl-repacks.site/"
 
@@ -108,7 +109,7 @@ def get_game_with_url(game:str):
 def check_limit():
     p = r.get(f'https://fitgirl-repacks.site/all-my-repacks-a-z/?lcp_page0=1#lcp_instance_0').text
     d = bs(p, 'html.parser')
-    f = d.find('article').find('div').find('ul', {'class': 'lcp_paginator'}).findAll('li')[-2]
+    f = d.find('article').find('div').find('ul', {'class': 'lcp_paginator'}).findAll('li')[-2] #type:ignore
     r_ = bs(str(f), 'html.parser')
     # print(a)
     m = []
@@ -124,7 +125,7 @@ def scrape_from_site(f_num:int, t_num:int):
         while f_num <= t_num:
             p = r.get(f'https://fitgirl-repacks.site/all-my-repacks-a-z/?lcp_page0={f_num}#lcp_instance_0').text
             d = bs(p, 'html.parser')           
-            f = d.find('article').find('div').find('ul').find_all('li')
+            f = d.find('article').find('div').find('ul').findAll('li')  # type: ignore
             # print(type(l))
             for i in f:
                 l.append(i)
@@ -133,7 +134,7 @@ def scrape_from_site(f_num:int, t_num:int):
         
         for i in l:
             y = bs(str(i), 'html.parser').find('li')
-            for a in y.findAll('a', href=True):
+            for a in y.findAll('a', href=True): # type: ignore
                 m.append(a['href'])
         end = time.time()
         print(f"Took {end-start} seconds to complete")
@@ -141,56 +142,29 @@ def scrape_from_site(f_num:int, t_num:int):
         chunk_data = []
         start_ = time.time()
         count = 1
+        links = [] 
         for i in m:
             start = time.time()
-            chunk_data.append(get_game_with_url(i))
+            game = get_game_with_url(i)
+            links.append(i)
             end = time.time()
             print(f"processes item {count} at {end-start} seconds")
             count += 1
-
+            game.update({"links": i}) #type: ignore
+            # print(f"each {game}")
+            chunk_data.append(game)
+        # game = chunk_data
+        # print(f"chunk_Data>>: {chunk_data}")
         end_ = time.time()
         print(f"Took {end_-start_} to process total chunk")
         return chunk_data
+
     else:
         return False        
 
 def scrape_all_from_site():
     f_num = 1
     t_num = check_limit()
-    start = time.time()
-    print(f"starting process at {str(start)}")
-    if f_num <= t_num:
-        l = []
-        while f_num <= t_num:
-            p = r.get(f'https://fitgirl-repacks.site/all-my-repacks-a-z/?lcp_page0={f_num}#lcp_instance_0').text
-            d = bs(p, 'html.parser')           
-            f = d.find('article').find('div').find('ul').find_all('li')
-            # print(type(l))
-            for i in f:
-                l.append(i)
-            f_num += 1
-        m = []
-        
-        for i in l:
-            y = bs(str(i), 'html.parser').find('li')
-            for a in y.findAll('a', href=True):
-                m.append(a['href'])
-        end = time.time()
-        print(f"Took {end-start} seconds to complete")
-        print(f"completed scraping from fitgirl...\n{len(m)} links scraped\nstarting data extraction...")
-        chunk_data = []
-        start_ = time.time()
-        count = 1
-        for i in m:
-            start = time.time()
-            chunk_data.append(get_game_with_url(i))
-            end = time.time()
-            print(f"processes item {count} at {end-start} seconds")
-            count += 1
+    return scrape_from_site(f_num, t_num)
 
-        end_ = time.time()
-        print(f"Took {end_-start_} to process total chunk")
-        return chunk_data
-    else:
-        return False        
-
+# scrape_all_from_site()

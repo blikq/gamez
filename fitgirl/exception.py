@@ -32,6 +32,9 @@ class HttpResponsePreconditionFailed(HttpResponse):
 class HttpResponsePayloadTooLarge(HttpResponse):
     status_code = 413
 
+class HttpResponseSuccess(HttpResponse):
+    status_code = 200
+
 def abort(status_code: int, msg=None):
     if status_code == 200:
         if msg is not None:
@@ -40,7 +43,7 @@ def abort(status_code: int, msg=None):
                 "Status": 200,
             }
             json_ = json.dumps(json_)
-            return JsonResponse(json_)
+            return HttpResponseSuccess(json_, content_type='application/json')
         elif msg == None:
             json_ = {
                 "success": True,
@@ -48,7 +51,8 @@ def abort(status_code: int, msg=None):
                 "message": msg
             }
             json_ = json.dumps(json_)
-            return JsonResponse(json_)
+            
+            return HttpResponseSuccess(json_, content_type='application/json')
 
     elif status_code == 400:
         json_ = {
