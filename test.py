@@ -38,9 +38,7 @@ from bs4 import BeautifulSoup as bs
 #         m.append(a['title'])
 #     return int(m[0])
 
-def 
-a = r.get('https://steamunlocked.net/?s=+').text
-b = bs(a, 'html.parser').find('nav', {'class':"navigation pagination"}).find('div', {'class':'nav-links'}).findAll('a', {"class":"page-numbers"}) # type: ignore
-c = bs(str(b[-1]), 'html.parser').text
-with open("a.txt", "w") as f:
-    f.write(str(c))
+
+# with open("a.txt", "w") as f:
+#     f.write(str(c))
+
