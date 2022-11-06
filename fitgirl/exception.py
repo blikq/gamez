@@ -1,39 +1,50 @@
-from django.http import HttpResponseBadRequest, HttpResponseForbidden, HttpResponse, HttpResponseNotFound, JsonResponse
+from django.http import HttpResponseBadRequest, HttpResponseForbidden, HttpResponse, HttpResponseNotFound, HttpResponseServerError
 import json
 
 
 class HttpResponseUnauthorized(HttpResponse):
     status_code = 401
 
+
 class HttpResaponseClientClosedRequest(HttpResponse):
     status_code = 499
+
 
 class HttpResponseRequestedRangeNotSatisfiable(HttpResponse):
     status_code = 416
 
+
 class HttpResponseGone(HttpResponse):
     status_code = 410
+
 
 class HttpResponseConflict(HttpResponse):
     status_code = 409
 
+
 class HttpResponseTooManyRequests(HttpResponse):
     status_code = 429
+
 
 class HttpResponseMethodNotAllowed(HttpResponse):
     status_code = 405
 
+
 class HttpResponseLengthRequired(HttpResponse):
     status_code = 411
+
 
 class HttpResponsePreconditionFailed(HttpResponse):
     status_code = 412
 
+
 class HttpResponsePayloadTooLarge(HttpResponse):
     status_code = 413
 
+
 class HttpResponseSuccess(HttpResponse):
     status_code = 200
+
 
 def abort(status_code: int, msg=None):
     if status_code == 200:
@@ -51,7 +62,7 @@ def abort(status_code: int, msg=None):
                 "message": msg
             }
             json_ = json.dumps(json_)
-            
+
             return HttpResponseSuccess(json_, content_type='application/json')
 
     elif status_code == 400:
@@ -257,7 +268,7 @@ def abort(status_code: int, msg=None):
         }
         json_ = json.dumps(json_)
         return HttpResponsePayloadTooLarge(json_, content_type='application/json')
-    
+
     elif status_code == 416:
         json_ = {
             "success": False,
@@ -312,3 +323,21 @@ def abort(status_code: int, msg=None):
         }
         json_ = json.dumps(json_)
         return HttpResaponseClientClosedRequest(json_, content_type='application/json')
+    elif status_code == 500:
+        json_ = {
+            "success": False,
+            "status_code": 500,
+            "error": {
+                "errors": [
+                    {
+                        "domain": "global",
+                        "reason": "Client Closed Request",
+                        "message": "Server ran into an unexpected error"
+                    }
+                ],
+                "code": 500,
+                "message": "Internal Server Error",
+            }
+        }
+        json_ = json.dumps(json_)
+        return HttpResponseServerError(json_, content_type='application/json')
