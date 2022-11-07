@@ -42,3 +42,12 @@ from bs4 import BeautifulSoup as bs
 # with open("a.txt", "w") as f:
 #     f.write(str(c))
 
+def scrape_content(link):
+    r_ = r.get(link)
+    if r_.status_code != 200:
+        return False
+    a = bs(r_.text, 'html.parser').find('div', {'class': 'col-lg-8 main-content no-padding'})
+    with open("a.txt", "w", encoding='utf-8') as f:
+        f.write(str(a))
+
+scrape_content('https://steamunlocked.net/25-marvels-spider-man-remastered-free-download/')

@@ -11,5 +11,4 @@ fitgirl_dbase = cluster["fitgirl"]
 # name:str, version:str, date_re:str, or_size:str, re_size:str, selective:bool, genres:list, link, companies:list, lang:list, screenshot:list
 
 def fitgirl_db(a):
-    print(a)
     fitgirl_dbase.insert_many(a)
