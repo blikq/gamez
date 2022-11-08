@@ -68,10 +68,15 @@ def scrape_upload(link):
     else:
         num_d -= 1
         name = name[0:num_d]
-    am_dict.update({"name": str(name)})
+    print(name)
+    am_dict.update({"name": str(name).lower()})
     link = link
     am_dict.update({"link": str(link)})
-    about = cont.find("div", {"id": "game_area_description"}).text
+    about = cont.find("div", {"id": "game_area_description"})
+    if about == None:
+        about = None
+    else:
+        about = about.text
     am_dict.update({"about_game": str(about)})
     m_pic = cont.findAll("img", {"class": "attachment-post-large size-post-large"})
     l_pic = []
@@ -79,10 +84,15 @@ def scrape_upload(link):
         im = bs(str(i), 'html.parser').find("img")["src"]
         l_pic.append(im)
     am_dict.update({"pictures": l_pic})
-    size = cont.find('a', {"class": "btn-download"}).find('em').text
-    download_link = cont.find('a', {"class": "btn-download"})["href"]
-    size_ = size.find("size: ")+7
-    size = size[size_:]
+    size = cont.find('a', {"class": "btn-download"}).find('em')
+    if size == None:
+        size = None
+        download_link = None
+    else:
+        size = size.text
+        size_ = size.find("size: ")+7
+        size = size[size_:]
+        download_link = cont.find('a', {"class": "btn-download"})["href"]
     am_dict.update({"size": size})
     am_dict.update({"download_link": download_link})
     t_list = (cont.find('ul').findAll('li'))
@@ -93,8 +103,10 @@ def scrape_upload(link):
     am_dict.update({"Requirements": requirements})
     return am_dict
 
-def upload_to_db(f_num, t_num):
+def upload_to_db(f_num, t_num, all=False):
     list_ = capturef_t(f_num, t_num)
+    if all == True:
+        list_ = capturea_f_p()
     if list_ == False:
         return False
     n_list = []
@@ -117,4 +129,4 @@ def upload_to_db(f_num, t_num):
     print("done inserting to database")
     return True
 
-print(upload_to_db(1,2))
+print(upload_to_db(1,20))

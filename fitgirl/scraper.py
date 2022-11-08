@@ -3,7 +3,7 @@ import time
 import re
 import json
 from bs4 import BeautifulSoup as bs
-# from models import fitgirl_db
+from models import fitgirl_db
 
 fitgirl = "https://fitgirl-repacks.site/"
 
@@ -89,7 +89,7 @@ def game_data_(body):
     names = get_name(body)
     links = get_links(body)
     screenshots = get_screenshots(body)
-    game = {'id': names[2], 'name': names[0], 'version': names[1], 'date': names[3], 'originalSize': data[0], 'repackSize': data[1],
+    game = {'id': names[2], 'name': str(names[0]).lower(), 'version': names[1], 'date': names[3], 'originalSize': data[0], 'repackSize': data[1],
             'selective': data[2], 'mirrors': links, 'genres': data[3], 'companies': data[4], 'languages': data[5], 'screenshots': screenshots}
     return game
 
@@ -167,4 +167,9 @@ def scrape_all_from_site():
     t_num = check_limit()
     return scrape_from_site(f_num, t_num)
 
+def upload_t_db(a, b):
+    cont = scrape_from_site(a, b)
+    fitgirl_db(cont)
+
+upload_t_db(1,4)
 # scrape_all_from_site()
