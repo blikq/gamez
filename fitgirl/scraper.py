@@ -115,6 +115,7 @@ def check_limit():
     m = []
     for a in r_.findAll('a', title=True):
         m.append(a['title'])
+    print(m[0])
     return int(m[0])
 
 def scrape_from_site(f_num:int, t_num:int):
@@ -171,5 +172,13 @@ def upload_t_db(a, b):
     cont = scrape_from_site(a, b)
     fitgirl_db(cont)
 
+def upload_all_t_db():
+    cont = scrape_all_from_site()
+    fitgirl_db(cont)
+    return True
+
 upload_t_db(1,4)
+# print(check_limit())
 # scrape_all_from_site()
+# upload_all_t_db()
+# scrape_from_site(1,2)

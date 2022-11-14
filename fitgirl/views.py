@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseForbidden
-from .scraper import get_data, scrape_from_site, scrape_all_from_site
+# from .scraper import get_data, scrape_from_site, scrape_all_from_site
 from .exception import abort
 from .models import fitgirl_db
 import os

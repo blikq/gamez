@@ -123,10 +123,10 @@ def upload_to_db(f_num, t_num, all=False):
     print(f"finishing processing in {end-start} seconds")
     print("started inserting to database")
     di = steamun_db(n_list)
+    print("done")
     if di == False:
         print("failed to insert")
         return False
     print("done inserting to database")
     return True
-
-print(upload_to_db(1,20))
+upload_to_db(1,20)

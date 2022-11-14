@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'fitgirl.apps',
     'steamunlocked',
-    'converge'
+    'converge',
+    'renderer'
 ]
 
 MIDDLEWARE = [
